@@ -42,21 +42,49 @@ void Robot::AutonomousInit() {
   // m_autoSelected = SmartDashboard::GetString("Auto Selector",
   //     kAutoNameDefault);
   wpi::print("Auto selected: {}\n", m_autoSelected);
-
+  double forward = 0.5;
+  double rotation = 0;
+  
   if (m_autoSelected == kAutoNameCustom) {
-    // Custom Auto goes here
+    DriveTrain.tankDrive(forward, rotation);
+    sleep(1);
+    forward = 0;
+    rotation = 0;
+    DriveTrain.tankDrive(forward, rotation);
   } else {
     // Default Auto goes here
+    DriveTrain.tankDrive(forward, rotation);
+    sleep(1);
+    forward = 0;
+    rotation = 0;
+    DriveTrain.tankDrive(forward, rotation);
   }
+
+  // if (m_autoSelected == kAutoNameCustom) {
+  //   // Custom Auto goes here
+  // } else {
+  //   // Default Auto goes here
+  // }
 }
 
 void Robot::AutonomousPeriodic() {
-  if (m_autoSelected == kAutoNameCustom) {
-    // Custom Auto goes here
-    
-  } else {
-    // Default Auto goes here
-  }
+  // double forward = 0.5;
+  // double rotation = 0;
+  
+  // if (m_autoSelected == kAutoNameCustom) {
+  //   DriveTrain.tankDrive(forward, rotation);
+  //   sleep(1);
+  //   forward = 0;
+  //   rotation = 0;
+  //   DriveTrain.tankDrive(forward, rotation);
+  // } else {
+  //   // Default Auto goes here
+  //   DriveTrain.tankDrive(forward, rotation);
+  //   sleep(1);
+  //   forward = 0;
+  //   rotation = 0;
+  //   DriveTrain.tankDrive(forward, rotation);
+  // }
 }
 
 void Robot::TeleopInit() {}
