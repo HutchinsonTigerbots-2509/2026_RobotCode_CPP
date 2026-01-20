@@ -2,12 +2,12 @@
 
 driveTrain::driveTrain()
   : frontRightMotor(1),
-    backRightMotor(2),
+    rearRightMotor(2),
     frontLeftMotor(3),
-    backLeftMotor(4)
+    rearLeftMotor(4)
 {
-  backLeftMotor.Follow(frontLeftMotor);
-  backRightMotor.Follow(frontRightMotor);
+  rearLeftMotor.Follow(frontLeftMotor);
+  rearRightMotor.Follow(frontRightMotor);
 }
 
 void driveTrain::tankDrive(double fwd, double rot) {
