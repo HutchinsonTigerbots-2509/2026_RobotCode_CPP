@@ -14,7 +14,3 @@ void driveTrain::tankDrive(double fwd, double rot) {
   frontLeftMotor.Set(ControlMode::PercentOutput, fwd + rot);
   frontRightMotor.Set(ControlMode::PercentOutput, -(fwd - rot));
 }
-void driveTrain::tankDrive(double fwd) {     //I have this here so that the robot only moves forwards with minimal to zero rotating
-  frontLeftMotor.Set(ControlMode::PercentOutput, fwd);
-  frontRightMotor.Set(ControlMode::PercentOutput, fwd);
-}

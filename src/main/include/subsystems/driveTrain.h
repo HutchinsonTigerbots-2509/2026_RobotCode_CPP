@@ -1,10 +1,10 @@
 #include "ctre/Phoenix.h"
 
 class driveTrain {
-  public:
-    driveTrain();
-    void tankDrive(double fwd, double rot);
-    void tankDrive(double fwd);
+public:
+  driveTrain();
+  void tankDrive(double fwd, double rot);
+
 private:
   ctre::phoenix::motorcontrol::can::VictorSPX frontLeftMotor;
   ctre::phoenix::motorcontrol::can::VictorSPX rearLeftMotor;
