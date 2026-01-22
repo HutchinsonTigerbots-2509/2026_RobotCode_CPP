@@ -6,10 +6,10 @@
 
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <wpi/print.h>
-#include <frc/Joystick.h>
+//#include <frc/Joystick.h>
+#include <frc/XboxController.h>
 
-frc::Joystick driverController{0};
-
+frc::XboxController controller{0};//The 0 jsut means port 0
 Robot::Robot() {
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
@@ -43,21 +43,37 @@ void Robot::AutonomousInit() {
   //     kAutoNameDefault);
   wpi::print("Auto selected: {}\n", m_autoSelected);
   double forward = 0.5;
-  double rotation = 0;
-  
+  double rotation = .5;
   if (m_autoSelected == kAutoNameCustom) {
-    DriveTrain.tankDrive(forward, rotation);
+    DriveTrain.tankDrive(forward);
     sleep(1);
     forward = 0;
     rotation = 0;
     DriveTrain.tankDrive(forward, rotation);
+    sleep(.25);
+    forward=0;
+    DriveTrain.tankDrive(forward,rotation);
+    sleep(2);
+    forward=.5;
+    DriveTrain.tankDrive(forward);
+    sleep(4);
+    forward=0;
+    DriveTrain.tankDrive(forward);
+    sleep(.25);
+    rotation=-.5;
+    DriveTrain.tankDrive(forward,rotation);
+    sleep(2);
+    forward=0.5;
+    DriveTrain.tankDrive(forward);
+
   } else {
     // Default Auto goes here
     DriveTrain.tankDrive(forward, rotation);
     sleep(1);
     forward = 0;
     rotation = 0;
-    DriveTrain.tankDrive(forward, rotation);
+    DriveTrain.tankDrive(forward);
+
   }
 
   // if (m_autoSelected == kAutoNameCustom) {
@@ -90,9 +106,13 @@ void Robot::AutonomousPeriodic() {
 void Robot::TeleopInit() {}
 
 void Robot::TeleopPeriodic() {
-  double forward = -driverController.GetY();
-  double rotation = driverController.GetX();
+  double forward = -controller.GetLeftY();
+  double rotation = controller.GetLeftX();
+  double rTrigger = controller.GetRightTriggerAxis();
+  double lTrigger = controller.GetLeftTriggerAxis();
   DriveTrain.tankDrive(forward, rotation);
+  //Intake.takingIn(lTrigger);             These are commented because they are not in the robot at the moment can be uncommented when motors are added
+  //Launch.fireLaunch(rTrigger);  
 }
 
 void Robot::DisabledInit() {}
