@@ -8,9 +8,10 @@
 #include <wpi/print.h>
 #include <frc/Joystick.h>
 
-frc::Joystick driverController{0};
 
-Robot::Robot() {
+Robot::Robot() 
+: driverController{0}
+{
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
@@ -90,8 +91,10 @@ void Robot::AutonomousPeriodic() {
 void Robot::TeleopInit() {}
 
 void Robot::TeleopPeriodic() {
-  double forward = -driverController.GetY();
-  double rotation = driverController.GetX();
+  double forward = -driverController.GetLeftY();
+  double rotation = driverController.GetLeftX();
+  double trigger = driverController.GetRightTriggerAxis();
+  Launcher.Launch(trigger);
   DriveTrain.tankDrive(forward, rotation);
 }
 

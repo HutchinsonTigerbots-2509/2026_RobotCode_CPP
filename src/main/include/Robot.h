@@ -9,6 +9,8 @@
 #include <frc/TimedRobot.h>
 #include <frc/smartdashboard/SendableChooser.h>
 #include <subsystems/driveTrain.h>
+#include <subsystems/launcher.h>
+#include <frc/XboxController.h>
 
 class Robot : public frc::TimedRobot {
  public:
@@ -31,4 +33,6 @@ class Robot : public frc::TimedRobot {
   const std::string kAutoNameCustom = "My Auto";
   std::string m_autoSelected;
   driveTrain DriveTrain;
+  frc::XboxController driverController;
+  launcher Launcher;
 };
