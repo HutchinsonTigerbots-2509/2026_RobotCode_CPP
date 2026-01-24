@@ -65,7 +65,10 @@ void Robot::AutonomousInit() {
 void Robot::AutonomousPeriodic() {
 }
 
-void Robot::TeleopInit() {}
+void Robot::TeleopInit() {
+  double x=LimelightHelpers::getTX("limelight-b");
+  std::cout<<x;
+}
 
 void Robot::TeleopPeriodic() {
   double forward = -driverController.GetLeftY();
@@ -73,8 +76,7 @@ void Robot::TeleopPeriodic() {
   double trigger = driverController.GetRightTriggerAxis();
   Launcher.Launch(trigger);
   DriveTrain.tankDrive(forward, rotation);
-  double x=LimelightHelpers::getTX("limelight-b");
-  std::cout<<x;
+  
 }
 
 void Robot::DisabledInit() {}
