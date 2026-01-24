@@ -11,6 +11,7 @@
 #include <subsystems/driveTrain.h>
 #include <subsystems/launcher.h>
 #include <frc/XboxController.h>
+#include "LimelightHelpers.h"
 
 class Robot : public frc::TimedRobot {
  public:

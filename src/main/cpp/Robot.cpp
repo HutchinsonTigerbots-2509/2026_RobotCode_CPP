@@ -60,32 +60,9 @@ void Robot::AutonomousInit() {
     rotation = 0;
     DriveTrain.tankDrive(forward, rotation);
   }
-
-  // if (m_autoSelected == kAutoNameCustom) {
-  //   // Custom Auto goes here
-  // } else {
-  //   // Default Auto goes here
-  // }
 }
 
 void Robot::AutonomousPeriodic() {
-  // double forward = 0.5;
-  // double rotation = 0;
-  
-  // if (m_autoSelected == kAutoNameCustom) {
-  //   DriveTrain.tankDrive(forward, rotation);
-  //   sleep(1);
-  //   forward = 0;
-  //   rotation = 0;
-  //   DriveTrain.tankDrive(forward, rotation);
-  // } else {
-  //   // Default Auto goes here
-  //   DriveTrain.tankDrive(forward, rotation);
-  //   sleep(1);
-  //   forward = 0;
-  //   rotation = 0;
-  //   DriveTrain.tankDrive(forward, rotation);
-  // }
 }
 
 void Robot::TeleopInit() {}
@@ -96,6 +73,8 @@ void Robot::TeleopPeriodic() {
   double trigger = driverController.GetRightTriggerAxis();
   Launcher.Launch(trigger);
   DriveTrain.tankDrive(forward, rotation);
+  double x=LimelightHelpers::getTX("limelight-b");
+  std::cout<<x;
 }
 
 void Robot::DisabledInit() {}
