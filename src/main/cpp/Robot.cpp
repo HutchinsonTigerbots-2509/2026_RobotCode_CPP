@@ -67,7 +67,6 @@ void Robot::AutonomousPeriodic() {
 
 void Robot::TeleopInit() {
   double x=LimelightHelpers::getTX("limelight-b");
-  std::cout<<x;
 }
 
 void Robot::TeleopPeriodic() {
@@ -76,6 +75,7 @@ void Robot::TeleopPeriodic() {
   double trigger = driverController.GetRightTriggerAxis();
   Launcher.Launch(trigger);
   DriveTrain.tankDrive(forward, rotation);
+  
   
 }
 
@@ -93,6 +93,7 @@ void Robot::SimulationPeriodic() {}
 
 #ifndef RUNNING_FRC_TESTS
 int main() {
+  phoenix6::SignalLogger::Stop;
   return frc::StartRobot<Robot>();
 }
 #endif

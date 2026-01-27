@@ -12,6 +12,7 @@
 #include <subsystems/launcher.h>
 #include <frc/XboxController.h>
 #include "LimelightHelpers.h"
+#include <ctre/phoenix6/SignalLogger.hpp>
 
 class Robot : public frc::TimedRobot {
  public:
