@@ -26,7 +26,6 @@ Robot::Robot()
  * LiveWindow and SmartDashboard integrated updating.
  */
 void Robot::RobotPeriodic() {}
-
 /**
  * This autonomous (along with the chooser code above) shows how to select
  * between different autonomous modes using the dashboard. The sendable chooser
@@ -67,6 +66,7 @@ void Robot::AutonomousPeriodic() {
 
 void Robot::TeleopInit() {
   double x=LimelightHelpers::getTX("limelight-b");
+  limelight_b.Clear();
 }
 
 void Robot::TeleopPeriodic() {
@@ -75,7 +75,6 @@ void Robot::TeleopPeriodic() {
   double trigger = driverController.GetRightTriggerAxis();
   Launcher.Launch(trigger);
   DriveTrain.tankDrive(forward, rotation);
-  
   
 }
 

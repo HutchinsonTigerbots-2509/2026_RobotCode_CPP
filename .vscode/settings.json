@@ -14,5 +14,24 @@
     "**/.factorypath": true,
     "**/*~": true
   },
-  "C_Cpp.default.configurationProvider": "vscode-wpilib"
+  "C_Cpp.default.configurationProvider": "vscode-wpilib",
+  "files.associations": {
+    "any": "cpp",
+    "bit": "cpp",
+    "codecvt": "cpp",
+    "compare": "cpp",
+    "condition_variable": "cpp",
+    "cstddef": "cpp",
+    "forward_list": "cpp",
+    "list": "cpp",
+    "string": "cpp",
+    "optional": "cpp",
+    "future": "cpp",
+    "limits": "cpp",
+    "memory": "cpp",
+    "mutex": "cpp",
+    "new": "cpp",
+    "functional": "cpp",
+    "regex": "cpp"
+  }
 }

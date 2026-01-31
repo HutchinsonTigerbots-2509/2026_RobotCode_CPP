@@ -5,7 +5,6 @@
 #pragma once
 
 #include <string>
-
 #include <frc/TimedRobot.h>
 #include <frc/smartdashboard/SendableChooser.h>
 #include <subsystems/driveTrain.h>
@@ -13,6 +12,7 @@
 #include <frc/XboxController.h>
 #include "LimelightHelpers.h"
 #include <ctre/phoenix6/SignalLogger.hpp>
+#include <subsystems/vision.h>
 
 class Robot : public frc::TimedRobot {
  public:
@@ -35,6 +35,7 @@ class Robot : public frc::TimedRobot {
   const std::string kAutoNameCustom = "My Auto";
   std::string m_autoSelected;
   driveTrain DriveTrain;
+  LimelightHelpers::VisionResultsClass limelight_b;
   frc::XboxController driverController;
   launcher Launcher;
 };
