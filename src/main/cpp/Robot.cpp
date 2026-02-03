@@ -4,9 +4,11 @@
 
 #include "Robot.h"
 
+#include "iostream"
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <wpi/print.h>
 #include <frc/Joystick.h>
+#include <frc2/command/PrintCommand.h>
 
 
 Robot::Robot() 
@@ -73,8 +75,15 @@ void Robot::TeleopPeriodic() {
   double forward = -driverController.GetLeftY();
   double rotation = driverController.GetLeftX();
   double trigger = driverController.GetRightTriggerAxis();
+  double lTrigger = driverController.GetLeftTriggerAxis();
   Launcher.Launch(trigger);
   DriveTrain.tankDrive(forward, rotation);
+  if(lTrigger>=.75){
+    Launcher.Launch(1);
+    std::cout << std::to_string(getDistanceFromHub("limelight-b@2"));
+    //frc2::PrintCommand(std::to_string(getDistanceFromHub("limelight_b")));
+    //sleep(1);
+  }
   
 }
 
