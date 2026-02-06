@@ -44,22 +44,47 @@ void Robot::AutonomousInit() {
   // m_autoSelected = SmartDashboard::GetString("Auto Selector",
   //     kAutoNameDefault);
   wpi::print("Auto selected: {}\n", m_autoSelected);
-  double forward = 0.5;
+  double forward = 0.25;
   double rotation = 0;
   
   if (m_autoSelected == kAutoNameCustom) {
     DriveTrain.tankDrive(forward, rotation);
     sleep(1);
-    forward = 0;
-    rotation = 0;
-    DriveTrain.tankDrive(forward, rotation);
+    DriveTrain.tankDrive(0, .25);
+    sleep(1);
+    DriveTrain.tankDrive(0,0);
+    sleep(1);
+    DriveTrain.tankDrive(0.25,0);
+    sleep(1);
+    DriveTrain.tankDrive(0,0);
   } else {
     // Default Auto goes here
     DriveTrain.tankDrive(forward, rotation);
     sleep(1);
-    forward = 0;
-    rotation = 0;
-    DriveTrain.tankDrive(forward, rotation);
+    DriveTrain.tankDrive(0, .25);
+    sleep(1);
+    DriveTrain.tankDrive(0,0);
+    sleep(.25);
+    DriveTrain.tankDrive(0.25,0);
+    sleep(1);
+    DriveTrain.tankDrive(0,0);
+    sleep(.25);
+    DriveTrain.tankDrive(0,0.25);
+    sleep(1);
+    DriveTrain.tankDrive(0,0);
+    sleep(.25);
+    DriveTrain.tankDrive(0.25,0);
+    sleep(1);
+    DriveTrain.tankDrive(0,0);
+    sleep(.25);
+    DriveTrain.tankDrive(0,0.25);
+    sleep(1);
+    DriveTrain.tankDrive(0,0);
+    sleep(.25);
+    DriveTrain.tankDrive(0.25,0);
+    sleep(1);
+    DriveTrain.tankDrive(0,0);
+    
   }
 }
 
@@ -73,7 +98,7 @@ void Robot::TeleopInit() {
 
 void Robot::TeleopPeriodic() {
   double forward = -driverController.GetLeftY();
-  double rotation = driverController.GetLeftX();
+  double rotation = driverController.GetRightX();
   double trigger = driverController.GetRightTriggerAxis();
   double lTrigger = driverController.GetLeftTriggerAxis();
   Launcher.Launch(trigger);
