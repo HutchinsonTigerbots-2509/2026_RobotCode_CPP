@@ -104,8 +104,9 @@ void Robot::TeleopPeriodic() {
   Launcher.Launch(trigger);
   DriveTrain.tankDrive(forward, rotation);
   if(lTrigger>=.75){
-    Launcher.Launch(1);
-    std::cout << std::to_string(getDistanceFromHub("limelight-b@2"));
+    Launcher.Launch(getDistanceFromHub("Limelight-b@2"));
+    frc::SmartDashboard::PutNumber("power",getDistanceFromHub("limelight-b@2"));
+    //std::cout << std::to_string(getDistanceFromHub("limelight-b@2"));
     //frc2::PrintCommand(std::to_string(getDistanceFromHub("limelight_b")));
     //sleep(1);
   }

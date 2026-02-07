@@ -1,4 +1,5 @@
 #include <subsystems/launcher.h>
+#include<math.h>
 
 launcher::launcher()
   : launchMotor(5)
@@ -13,5 +14,5 @@ void launcher::Launch(double trigger) {
     // }else{
     //     velocity=1500;
     // }
-    launchMotor.Set(ControlMode::PercentOutput, trigger);
+    launchMotor.Set(ControlMode::PercentOutput, abs(trigger));
 };
