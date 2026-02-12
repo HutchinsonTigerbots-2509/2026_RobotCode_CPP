@@ -193,7 +193,7 @@ namespace LimelightHelpers {
   inline double getTX(const std::string& limelightName = "") {
     return getLimelightNTDouble(limelightName, "tx");
   }
-
+  
   /**
      * Gets the vertical offset from the crosshair to the target in degrees.
      * @param limelightName Name of the Limelight camera ("" for default)

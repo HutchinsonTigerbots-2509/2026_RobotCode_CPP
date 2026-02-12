@@ -14,6 +14,7 @@
 #include <frc/MathUtil.h>
 #include <frc/geometry/Pose2d.h>
 #include <frc/DriverStation.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 #include <Robot.h>
 #include <vector>
 /*
@@ -104,13 +105,21 @@ const int BLUE_HUB_APRIL_TAGS[16] = {
 std::vector<LimelightHelpers::FiducialResultClass> getRawFiducials(std::string limelight_id){
     //The limelight stores its current values as a LImelightResultClass. Within that class is your targetingResults
     //The targetingResults class is a wrapper of all of the targeting data types that you could want for any of the pipelines
-   LimelightHelpers::LimelightResultsClass limelightResult = LimelightHelpers::getLatestResults(limelight_id);
-   return limelightResult.targetingResults.FiducialResults; //Return the vector of April Tag related values.
-   //A vector must be used because the return size is based on how many targets can be seen at this point in time
+    std::shared_ptr<nt::NetworkTable> netTbl;
+    netTbl = LimelightHelpers::getLimelightNTTable("limelight-b");
+    //netTbl->GetNumber("getpipe",0.0)
+    
+    LimelightHelpers::LimelightResultsClass limelightResult = LimelightHelpers::getLatestResults("limelight-b");
+    
+
+    //frc::SmartDashboard::PutNumber("power", netTbl->GetNumber("t2d",0.0));
+    frc::SmartDashboard::PutString("networkTable", netTbl->GetString("tcclass",""));
+    return limelightResult.targetingResults.FiducialResults; //Return the vector of April Tag related values.
+    //A vector must be used because the return size is based on how many targets can be seen at this point in time
 }
 
 double getDistanceFromHub(std::string limelightId){
-    double aprilTagId=LimelightHelpers::getFiducialID(limelightId);  
+    double aprilTagId=LimelightHelpers::getFiducialID("limelight-b");
     // double mountAngle=12;   //The angle of the mount in degrees
     // double lensHeight=6.75;  //This is in inches.Change this to get the corrct distance
     // double goalHeight=11.5; //In inches
@@ -129,7 +138,10 @@ double getDistanceFromHub(std::string limelightId){
     double distance1;
     double distance2;
     if(frc::DriverStation::GetAlliance()==frc::DriverStation::Alliance::kRed){
-        if(LimelightHelpers::getTargetCount(limelightId)>0){	     
+        /*frc::SmartDashboard::PutNumber("power",aprilTagId);
+        frc::SmartDashboard::PutBoolean("TV", LimelightHelpers::getTV("limelight-b"));
+        */
+       if(LimelightHelpers::getTV("limelight-b")){	  //Get past here   
             /* Limelight Notes:
             *   FiducialResultClass represents an AprilTag/fiducial target result from JSON output. FiducialResultClass inherits 
                 from the SingleTargetingResultClass so contains the following public attributes:
@@ -157,19 +169,24 @@ double getDistanceFromHub(std::string limelightId){
 
                 **6D being x, y, z, roll, pitch, yaw
             */
-            std::vector<LimelightHelpers::FiducialResultClass> aprilTagResults = getRawFiducials(limelightId); //Get data for all visible April Tags from limelight
-
+            std::vector<LimelightHelpers::FiducialResultClass> aprilTagResults = getRawFiducials("limelight-b"); //Get data for all visible April Tags from limelight
+            if(aprilTagResults.empty()){return -42;}
             for(LimelightHelpers::FiducialResultClass aprilTag : aprilTagResults){ //Iterate through all visible april tags
                 if((std::find(std::begin(RED_HUB_APRIL_TAGS), std::end(RED_APRIL_TAGS), aprilTag.m_fiducialID)) != std::end(RED_APRIL_TAGS)){ //check to see if the aprilTag is a RED tag
                     if(aprilTag.m_TargetAreaNormalized>closestCurrentArea){
                         closestCurrentArea=aprilTag.m_TargetAreaNormalized;
                         closestTag=aprilTag;
-                    }
+                    }else{
+                    return -7;
                 }
+                }else{
+                    return -4;
+                }  
             }
            
-            if(closestTag.m_fiducialID == LimelightHelpers::INVALID_TARGET){return-1;}  //NO hub tag was found
-            else{
+            if(closestTag.m_fiducialID==LimelightHelpers::INVALID_TARGET){   //NO hub tag was found         //This is where the error is
+                return-99;
+            }else{
                 switch (closestTag.m_fiducialID){
                 case RED_HUB_BACK_LEFT:
                     parterTagChecker=RED_HUB_BACK_RIGHT;
@@ -208,11 +225,11 @@ double getDistanceFromHub(std::string limelightId){
 
             //return distance;
         }else{
-            return -1;
+            return -2;
         }
     }else if(frc::DriverStation::GetAlliance()==frc::DriverStation::Alliance::kBlue){
-        if(LimelightHelpers::getTargetCount(limelightId)>0){
-            std::vector<LimelightHelpers::FiducialResultClass> aprilTagResults = getRawFiducials(limelightId); //Get data for all visible April Tags from limelight
+        if(LimelightHelpers::getTargetCount("limelight-b")>0){
+            std::vector<LimelightHelpers::FiducialResultClass> aprilTagResults = getRawFiducials("limelight-b"); //Get data for all visible April Tags from limelight
 
             for(LimelightHelpers::FiducialResultClass aprilTag : aprilTagResults){ //Iterate through all visible april tags
                 if((std::find(std::begin(BLUE_HUB_APRIL_TAGS), std::end(BLUE_APRIL_TAGS), aprilTag.m_fiducialID)) != std::end(BLUE_APRIL_TAGS)){ //check to see if the aprilTag is a RED tag
@@ -224,7 +241,7 @@ double getDistanceFromHub(std::string limelightId){
                 }
             }
             //Check if a hub tag was found
-            if(closestTag.m_fiducialID == LimelightHelpers::INVALID_TARGET){return-1;}
+            if(closestTag.m_fiducialID == LimelightHelpers::INVALID_TARGET){return-2;}
             else{
                 switch (closestTag.m_fiducialID){
                 case BLUE_HUB_BACK_LEFT:
@@ -269,7 +286,7 @@ double getDistanceFromHub(std::string limelightId){
     distance2=furtherCurrentArea/tagSize; //Get distance ratio to determine how far the robot is from the target
     double y =acos((abs(pow(distance1,2)+pow(distance2,2)-pow(14,2)))/(2*distance1*distance2));
     distance1=pow((distance1*0.00008),2);
-    return abs(distance1);
+    return y;
 }
 
 

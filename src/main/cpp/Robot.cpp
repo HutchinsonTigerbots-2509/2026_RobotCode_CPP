@@ -92,8 +92,8 @@ void Robot::AutonomousPeriodic() {
 }
 
 void Robot::TeleopInit() {
-  double x=LimelightHelpers::getTX("limelight-b");
-  limelight_b.Clear();
+  //double x=LimelightHelpers::getTX("limelight-b");
+  //limelight_b.Clear();
 }
 
 void Robot::TeleopPeriodic() {
@@ -101,11 +101,23 @@ void Robot::TeleopPeriodic() {
   double rotation = driverController.GetRightX();
   double trigger = driverController.GetRightTriggerAxis();
   double lTrigger = driverController.GetLeftTriggerAxis();
+  double distance;
+  //double distance =getDistanceFromHub("limelight-b");
+  double tv=LimelightHelpers::getTV("limelight-b");
+  //double distance=LimelightHelpers::getFiducialID("limelight-b");
   Launcher.Launch(trigger);
   DriveTrain.tankDrive(forward, rotation);
+  frc::SmartDashboard::PutBoolean("TV",tv);
+  //frc::SmartDashboard::PutNumber("power", distance);
   if(lTrigger>=.75){
-    Launcher.Launch(getDistanceFromHub("Limelight-b@2"));
-    frc::SmartDashboard::PutNumber("power",getDistanceFromHub("limelight-b@2"));
+    //Launcher.Launch(getDistanceFromHub("limelight-b"));
+    //LimelightHelpers::LimelightResultsClass limelightResult = LimelightHelpers::getLatestResults("limelight-b");
+    frc::SmartDashboard::PutNumber("y",getDistanceFromHub("limelight-b"));
+    //LimelightHelpers::
+    //distance = LimelightHelpers::getFiducialID("limelight-b");
+    //frc::SmartDashboard::PutNumber("power",distance);
+    
+    
     //std::cout << std::to_string(getDistanceFromHub("limelight-b@2"));
     //frc2::PrintCommand(std::to_string(getDistanceFromHub("limelight_b")));
     //sleep(1);
