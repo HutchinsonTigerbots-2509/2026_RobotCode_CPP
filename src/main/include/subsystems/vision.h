@@ -102,20 +102,9 @@ const int BLUE_HUB_APRIL_TAGS[16] = {
     Notes: LimelightResultsClass is the top-level container for all Limelight results parsed from JSON. FiducialResultsClass 
     represents an AprilTag/fiducial target result from the Limelight's JSON output 
 */
-std::vector<LimelightHelpers::FiducialResultClass> getRawFiducials(std::string limelight_id){
-    //The limelight stores its current values as a LImelightResultClass. Within that class is your targetingResults
-    //The targetingResults class is a wrapper of all of the targeting data types that you could want for any of the pipelines
-    std::shared_ptr<nt::NetworkTable> netTbl;
-    netTbl = LimelightHelpers::getLimelightNTTable("limelight-b");
-    //netTbl->GetNumber("getpipe",0.0)
-    
-    LimelightHelpers::LimelightResultsClass limelightResult = LimelightHelpers::getLatestResults("limelight-b");
-    
-
-    //frc::SmartDashboard::PutNumber("power", netTbl->GetNumber("t2d",0.0));
-    frc::SmartDashboard::PutString("networkTable", netTbl->GetString("tcclass",""));
-    return limelightResult.targetingResults.FiducialResults; //Return the vector of April Tag related values.
-    //A vector must be used because the return size is based on how many targets can be seen at this point in time
+std::vector<LimelightHelpers::RawFiducial> getRawFiducials(std::string limelight_id){
+    LimelightHelpers::PoseEstimate BotPoseEstimate = LimelightHelpers::getBotPoseEstimate("limelight-b", "AprilTagInfo", false);
+    return BotPoseEstimate.rawFiducials;
 }
 
 double getDistanceFromHub(std::string limelightId){
@@ -125,8 +114,8 @@ double getDistanceFromHub(std::string limelightId){
     // double goalHeight=11.5; //In inches
     // double angleToGoal;
     // double radianAngleToGoal;
-    LimelightHelpers::FiducialResultClass closestTag;
-    LimelightHelpers::FiducialResultClass parterTag;
+    int ClosestAprilTag_id;
+    int partnerTag;
     int parterTagChecker;
     const double tagSize=6.5;
     double closestCurrentArea;
@@ -169,13 +158,14 @@ double getDistanceFromHub(std::string limelightId){
 
                 **6D being x, y, z, roll, pitch, yaw
             */
-            std::vector<LimelightHelpers::FiducialResultClass> aprilTagResults = getRawFiducials("limelight-b"); //Get data for all visible April Tags from limelight
+            //std::vector<LimelightHelpers::FiducialResultClass> aprilTagResults = getRawFiducials("limelight-b"); //Get data for all visible April Tags from limelight
+            std::vector<LimelightHelpers::RawFiducial> aprilTagResults = getRawFiducials("limelight-b");
             if(aprilTagResults.empty()){return -42;}
-            for(LimelightHelpers::FiducialResultClass aprilTag : aprilTagResults){ //Iterate through all visible april tags
-                if((std::find(std::begin(RED_HUB_APRIL_TAGS), std::end(RED_APRIL_TAGS), aprilTag.m_fiducialID)) != std::end(RED_APRIL_TAGS)){ //check to see if the aprilTag is a RED tag
-                    if(aprilTag.m_TargetAreaNormalized>closestCurrentArea){
-                        closestCurrentArea=aprilTag.m_TargetAreaNormalized;
-                        closestTag=aprilTag;
+            for(LimelightHelpers::RawFiducial aprilTag : aprilTagResults){ //Iterate through all visible april tags
+                if((std::find(std::begin(RED_HUB_APRIL_TAGS), std::end(RED_APRIL_TAGS), aprilTag.ta)) != std::end(RED_APRIL_TAGS)){ //check to see if the aprilTag is a RED tag
+                    if(aprilTag.ta  > closestCurrentArea){
+                        closestCurrentArea=aprilTag.ta;
+                        ClosestAprilTag_id=aprilTag.id;
                     }else{
                     return -7;
                 }
@@ -183,67 +173,71 @@ double getDistanceFromHub(std::string limelightId){
                     return -4;
                 }  
             }
-           
-            if(closestTag.m_fiducialID==LimelightHelpers::INVALID_TARGET){   //NO hub tag was found         //This is where the error is
-                return-99;
-            }else{
-                switch (closestTag.m_fiducialID){
-                case RED_HUB_BACK_LEFT:
-                    parterTagChecker=RED_HUB_BACK_RIGHT;
-                    break;
-                case RED_HUB_BACK_RIGHT:
-                    parterTagChecker=RED_HUB_BACK_LEFT;
-                    break;
-                case RED_HUB_FRONT_LEFT:
-                    parterTagChecker=RED_HUB_FRONT_RIGHT;
-                    break;
-                case RED_HUB_FRONT_RIGHT:
-                    parterTagChecker=RED_HUB_FRONT_LEFT;
-                    break;
-                case RED_HUB_LEFT_LEFT:
-                    parterTagChecker=RED_HUB_LEFT_RIGHT;
-                    break;
-                case RED_HUB_LEFT_RIGHT:
-                    parterTagChecker=RED_HUB_LEFT_LEFT;
-                    break;
-                case RED_HUB_RIGHT_LEFT:
-                    parterTagChecker=RED_HUB_RIGHT_RIGHT;
-                    break;
-                case RED_HUB_RIGHT_RIGHT:
-                    parterTagChecker=RED_HUB_RIGHT_LEFT;
-                    break;
-                };
-                for(LimelightHelpers::FiducialResultClass aprilTag : aprilTagResults){ //Iterate through all visible april tags
-                    if(aprilTag.m_fiducialID==parterTagChecker){
-                        parterTag=aprilTag;
-                        furtherCurrentArea=parterTag.m_TargetAreaNormalized;
-                        break;
+           for(LimelightHelpers::RawFiducial closestTag : aprilTagResults){
+                if(closestTag.id == ClosestAprilTag_id){    
+                    if(closestTag.id==LimelightHelpers::INVALID_TARGET){   //NO hub tag was found         //This is where the error is
+                        return-99;
+                    }else{
+                        switch (closestTag.id){
+                        case RED_HUB_BACK_LEFT:
+                            parterTagChecker=RED_HUB_BACK_RIGHT;
+                            break;
+                        case RED_HUB_BACK_RIGHT:
+                            parterTagChecker=RED_HUB_BACK_LEFT;
+                            break;
+                        case RED_HUB_FRONT_LEFT:
+                            parterTagChecker=RED_HUB_FRONT_RIGHT;
+                            break;
+                        case RED_HUB_FRONT_RIGHT:
+                            parterTagChecker=RED_HUB_FRONT_LEFT;
+                            break;
+                        case RED_HUB_LEFT_LEFT:
+                            parterTagChecker=RED_HUB_LEFT_RIGHT;
+                            break;
+                        case RED_HUB_LEFT_RIGHT:
+                            parterTagChecker=RED_HUB_LEFT_LEFT;
+                            break;
+                        case RED_HUB_RIGHT_LEFT:
+                            parterTagChecker=RED_HUB_RIGHT_RIGHT;
+                            break;
+                        case RED_HUB_RIGHT_RIGHT:
+                            parterTagChecker=RED_HUB_RIGHT_LEFT;
+                            break;
+                        };
+                        for(LimelightHelpers::RawFiducial aprilTag : aprilTagResults){ //Iterate through all visible april tags
+                            if(aprilTag.id==parterTagChecker){
+                                partnerTag = aprilTag.id;
+                                furtherCurrentArea=aprilTag.ta;
+                                break;
+                            }
+                        }
+                        
                     }
+                    break;
                 }
-                
             }
-
             //return distance;
         }else{
             return -2;
         }
     }else if(frc::DriverStation::GetAlliance()==frc::DriverStation::Alliance::kBlue){
         if(LimelightHelpers::getTargetCount("limelight-b")>0){
-            std::vector<LimelightHelpers::FiducialResultClass> aprilTagResults = getRawFiducials("limelight-b"); //Get data for all visible April Tags from limelight
-
-            for(LimelightHelpers::FiducialResultClass aprilTag : aprilTagResults){ //Iterate through all visible april tags
-                if((std::find(std::begin(BLUE_HUB_APRIL_TAGS), std::end(BLUE_APRIL_TAGS), aprilTag.m_fiducialID)) != std::end(BLUE_APRIL_TAGS)){ //check to see if the aprilTag is a RED tag
-                    if(aprilTag.m_TargetAreaNormalized>closestCurrentArea){
-                        closestCurrentArea=aprilTag.m_TargetAreaNormalized;
-                        closestTag=aprilTag;
+            std::vector<LimelightHelpers::RawFiducial> aprilTagResults = getRawFiducials("limelight-b"); //Get data for all visible April Tags from limelight
+            frc::SmartDashboard::PutNumber("test",67);
+            for(LimelightHelpers::RawFiducial aprilTag : aprilTagResults){ //Iterate through all visible april tags
+                if((std::find(std::begin(BLUE_HUB_APRIL_TAGS), std::end(BLUE_APRIL_TAGS), aprilTag.id)) != std::end(BLUE_APRIL_TAGS)){ //check to see if the aprilTag is a RED tag
+                    if(aprilTag.ta > closestCurrentArea){
+                        closestCurrentArea = aprilTag.ta;
+                        ClosestAprilTag_id = aprilTag.id;
                     }
 
                 }
             }
             //Check if a hub tag was found
-            if(closestTag.m_fiducialID == LimelightHelpers::INVALID_TARGET){return-2;}
+        for (LimelightHelpers::RawFiducial closestTag : aprilTagResults) {
+            if(closestTag.id == LimelightHelpers::INVALID_TARGET){return-2;}
             else{
-                switch (closestTag.m_fiducialID){
+                switch (closestTag.id){
                 case BLUE_HUB_BACK_LEFT:
                     parterTagChecker=BLUE_HUB_BACK_RIGHT;
                     break;
@@ -269,16 +263,19 @@ double getDistanceFromHub(std::string limelightId){
                 parterTagChecker=BLUE_HUB_RIGHT_LEFT;
                     break;
                 };
-                for(LimelightHelpers::FiducialResultClass aprilTag : aprilTagResults){ //Iterate through all visible april tags
-                    if(aprilTag.m_fiducialID==parterTagChecker){
-                        parterTag=aprilTag;
+                for(LimelightHelpers::RawFiducial aprilTag : aprilTagResults){ //Iterate through all visible april tags
+                    if(aprilTag.id==parterTagChecker){
+                        partnerTag=aprilTag.id;
+                        furtherCurrentArea = aprilTag.ta;
                         break;
                     }
                 }
             }
+        }
         }else{
             return -1;
-        }               
+        }   
+              
     }else{
         return -1;
     }  
