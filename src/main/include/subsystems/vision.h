@@ -289,7 +289,7 @@ double getDistanceFromHub(std::string limelightId)
         //    distance1 =closestCurrentArea/tagSize; //Get distance ratio to determine how far the robot is from the target
         //     distance2=furtherCurrentArea/tag-Size; //Get distance ratio to determine how far the robot is from the target
     }
-    double y =acos((pow(primaryDistance, 2) + pow(partnerDistance, 2) - pow(.3556, 2)) /(2 * primaryDistance * partnerDistance));
+    double y =acos((pow(primaryDistance, 2) + pow(partnerDistance, 2) - pow(16/45, 2)) /(2 * primaryDistance * partnerDistance));
     return y;
 }
 
