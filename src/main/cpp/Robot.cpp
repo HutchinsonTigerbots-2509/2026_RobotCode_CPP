@@ -4,12 +4,6 @@
 
 #include "Robot.h"
 
-#include "iostream"
-#include <frc/smartdashboard/SmartDashboard.h>
-#include <wpi/print.h>
-#include <frc/Joystick.h>
-#include <frc2/command/PrintCommand.h>
-
 
 Robot::Robot() 
 : driverController{0}
@@ -97,31 +91,44 @@ void Robot::TeleopInit() {
 }
 
 void Robot::TeleopPeriodic() {
+  double angleDerivative=frc::SmartDashboard::GetNumber("Derivative",0);//These are tuners      it works don't question
+  double angleIntegral=frc::SmartDashboard::GetNumber("Integral",0);//These are tuners          it smooths the motion on the robot.
+  double angleProptional=frc::SmartDashboard::GetNumber("Proptional",0);//These are tuners 
+  frc::PIDController angleTargetingPID{0,0,0};
   double forward = -driverController.GetLeftY();
   double rotation = driverController.GetRightX();
   double trigger = driverController.GetRightTriggerAxis();
   double lTrigger = driverController.GetLeftTriggerAxis();
   double distance;
-  //double distance =getDistanceFromHub("limelight-b");
-  double tv=LimelightHelpers::getTV("limelight-b");
-  //double distance=LimelightHelpers::getFiducialID("limelight-b");
-  Launcher.Launch(trigger);
-  DriveTrain.tankDrive(forward, rotation);
-  frc::SmartDashboard::PutBoolean("TV",tv);
-  //frc::SmartDashboard::PutNumber("power", distance);
-  if(lTrigger>=.75){
-    //Launcher.Launch(getDistanceFromHub("limelight-b"));
-    //LimelightHelpers::LimelightResultsClass limelightResult = LimelightHelpers::getLatestResults("limelight-b");
-    frc::SmartDashboard::PutNumber("y",getDistanceFromHub("limelight-b"));
-    //LimelightHelpers::
-    //distance = LimelightHelpers::getFiducialID("limelight-b");
-    //frc::SmartDashboard::PutNumber("power",distance);
-    
-    
-    //std::cout << std::to_string(getDistanceFromHub("limelight-b@2"));
-    //frc2::PrintCommand(std::to_string(getDistanceFromHub("limelight_b")));
-    //sleep(1);
+  bool vision_button = false;
+  if(driverController.GetAButton()){
+    if(trackingTag(11, &distance, &rotation)){
+      angleTargetingPID.Calculate(rotation,0);
+    }
   }
+  //double distance =getDistanceFromHub("limelight-b");
+  //double tv=LimelightHelpers::getTV("limelight-b");
+  //double distance=LimelightHelpers::getFiducialID("limelight-b");
+  //Launcher.Launch(trigger);
+  //DriveTrain.tankDrive(forward, rotation);
+  //frc::SmartDashboard::PutBoolean("TV",tv);
+  //frc::SmartDashboard::PutNumber("power", distance);
+  //frc::SmartDashboard::PutNumber("tx",LimelightHelpers::getTX("limelight-b"));
+  //if(a){
+  //DriveTrain.aiming(getDistanceFromHub("limelight-b"));
+  //frc::SmartDashboard::PutNumber("y",getDistanceFromHub("limelight-b"));
+  // if(driverController.GetAButtonPressed()){vision_button = true;}
+  // while(getDistanceFromHub("limelight-b") >= .1 and vision_button){
+  //   std::cout << "\nPressing A\n";
+  //   frc::SmartDashboard::PutNumber("y",getDistanceFromHub("limelight-b"));
+  //   if(driverController.GetAButtonReleased()){vision_button = false;}
+  // }
+  // DriveTrain.tankDrive(forward, rotation);
+  // //}
+  // if(lTrigger>=.75){
+  //   frc::SmartDashboard::PutNumber("y",getDistanceFromHub("limelight-b"));
+  // }
+  
   
 }
 
