@@ -13,6 +13,8 @@
 #include "LimelightHelpers.h"
 #include <ctre/phoenix6/SignalLogger.hpp>
 #include <subsystems/vision.h>
+#include <wpi/print.h>
+#include <frc/controller/PIDController.h>
 
 class Robot : public frc::TimedRobot {
  public:
