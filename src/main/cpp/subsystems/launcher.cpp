@@ -14,5 +14,5 @@ void launcher::Launch(double trigger) {
     // }else{
     //     velocity=1500;
     // }
-    launchMotor.Set(ControlMode::PercentOutput, abs(trigger));
+    launchMotor.Set(ControlMode::PercentOutput,trigger);
 };

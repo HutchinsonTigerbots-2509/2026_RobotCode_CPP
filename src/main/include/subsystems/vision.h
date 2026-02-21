@@ -292,7 +292,17 @@ double getDistanceFromHub(std::string limelightId)
     double y = acos((pow(primaryDistance, 2) + pow(partnerDistance, 2) - pow(14, 2))) / (2 * primaryDistance * partnerDistance);
     return y;
 }
-
+bool trackingTag(int tagId,double* distance,double* angle){
+    std::vector<LimelightHelpers::RawFiducial> aprilTagResults = getRawFiducials("limelight-b");
+    for (LimelightHelpers::RawFiducial aprilTag : aprilTagResults){
+        if(aprilTag.id==tagId){
+            *distance=aprilTag.distToCamera;
+            *angle=aprilTag.txnc;
+            return true;
+        }
+    }
+    return false;
+}
 // Determine If April Tags Are Visible  DONE
 
 // Determine If Visible April Tags Hub Tags That Match Your Alliance Color DONE
